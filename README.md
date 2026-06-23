@@ -1,11 +1,8 @@
 # Enterprise Data Integration Take-Home
 
-Build a local Python + SQL pipeline that combines sales data from a core SQL
-Server source and an acquired PostgreSQL source into one warehouse-ready sales
-fact table.
+Build a Python + SQL pipeline that combines sales data from a core SQL Server
+source and an acquired PostgreSQL source into a Snowflake sales fact table.
 
-Focus on correctness, clean Python design, SQL transformations, data quality,
-and tests. Recommended time box: 3 to 5 hours.
 
 ## Inputs
 
@@ -21,12 +18,15 @@ Use the CSV fixtures in `data/`:
 
 - Implement an OOP Python pipeline with `main.py` as the entry point.
 - Use an abstract extractor contract, concrete SQL Server/PostgreSQL extractors,
-  a staging loader, and a reusable SQL script runner.
+  a Snowflake staging loader, and a reusable SQL script runner.
 - Process sources polymorphically from the orchestrator.
 - Run locally from the provided CSVs; live SQL Server/PostgreSQL instances are
   not required.
-- Put database-native transformations in `src/sql/`.
+- Load staged source data and final transformed outputs into Snowflake.
+- Put Snowflake-native transformations in `src/sql/`.
 - Do not hard-code secrets or connection strings.
+- Read Snowflake connection settings from environment variables or a local
+  ignored config file.
 
 ## Transformations To Handle
 
@@ -42,9 +42,20 @@ Use the CSV fixtures in `data/`:
 ## Expected Output
 
 After processing SQL Server and PostgreSQL data, the final fact table should
-match `data/expected_sales_fact.csv`.
+be written to Snowflake and match `data/expected_sales_fact.csv`.
 
-Rejected rows should match `data/expected_rejects.csv`.
+Rejected rows should be written to Snowflake and match
+`data/expected_rejects.csv`.
+
+Suggested Snowflake objects:
+
+```text
+DE_INTEGRATION.RAW.STG_CORE_SALES
+DE_INTEGRATION.RAW.STG_ACQUIRED_SALES
+DE_INTEGRATION.RAW.STG_EXCHANGE_RATES
+DE_INTEGRATION.ANALYTICS.SALES_FACT
+DE_INTEGRATION.ANALYTICS.SALES_REJECTS
+```
 
 Required fact columns:
 
@@ -70,7 +81,7 @@ main.py
 src/extractors/base_extractor.py
 src/extractors/postgres.py
 src/extractors/sqlserver.py
-src/loaders/staging.py
+src/loaders/snowflake.py
 src/sql/staging_core.sql
 src/sql/staging_acquired.sql
 src/sql/warehouse_merge.sql
@@ -92,9 +103,23 @@ Run:
 python main.py
 ```
 
+Example Snowflake environment variables:
+
+```bash
+export SNOWFLAKE_ACCOUNT="<account_identifier>"
+export SNOWFLAKE_USER="<user>"
+export SNOWFLAKE_PASSWORD="<password>"
+export SNOWFLAKE_ROLE="<role>"
+export SNOWFLAKE_WAREHOUSE="<warehouse>"
+export SNOWFLAKE_DATABASE="DE_INTEGRATION"
+export SNOWFLAKE_SCHEMA="ANALYTICS"
+```
+
 ## Deliverables
 
 - Runnable pipeline.
+- Snowflake DDL/DML or setup notes for required database, schemas, stages, and
+  tables.
 - Implemented Python modules and SQL scripts.
 - Tests for extractors, transformations, reject handling, and final output.
 - Brief notes on assumptions and how to run the project.
