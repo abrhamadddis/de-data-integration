@@ -19,12 +19,9 @@ Use the CSV fixtures in `data/`:
 - Implement an OOP Python pipeline with `main.py` as the entry point.
 - Use an abstract extractor contract, concrete SQL Server/PostgreSQL extractors,
   a Snowflake staging loader, and a reusable SQL script runner.
-- Process sources polymorphically from the orchestrator.
-- Run locally from the provided CSVs; live SQL Server/PostgreSQL instances are
-  not required.
+- Run locally from the provided CSVs; live SQL Server/PostgreSQL instances are not required.
 - Load staged source data and final transformed outputs into Snowflake.
 - Put Snowflake-native transformations in `src/sql/`.
-- Do not hard-code secrets or connection strings.
 - Read Snowflake connection settings from environment variables or a local
   ignored config file.
 
@@ -41,13 +38,13 @@ Use the CSV fixtures in `data/`:
 
 ## Expected Output
 
-After processing SQL Server and PostgreSQL data, the final fact table should
+After processing SQL Server and PostgreSQL data, the final fact table can
 be written to Snowflake and match `data/expected_sales_fact.csv`.
 
 Rejected rows should be written to Snowflake and match
 `data/expected_rejects.csv`.
 
-Suggested Snowflake objects:
+Suggested Snowflake objects (Feel free to change as you see fit):
 
 ```text
 DE_INTEGRATION.RAW.STG_CORE_SALES
@@ -103,30 +100,16 @@ Run:
 python main.py
 ```
 
-Example Snowflake environment variables:
-
-```bash
-export SNOWFLAKE_ACCOUNT="<account_identifier>"
-export SNOWFLAKE_USER="<user>"
-export SNOWFLAKE_PASSWORD="<password>"
-export SNOWFLAKE_ROLE="<role>"
-export SNOWFLAKE_WAREHOUSE="<warehouse>"
-export SNOWFLAKE_DATABASE="DE_INTEGRATION"
-export SNOWFLAKE_SCHEMA="ANALYTICS"
-```
 
 ## Deliverables and Presentation
 
 - Runnable pipeline.
-- Snowflake DDL/DML or setup notes for required database, schemas, stages, and
-  tables.
 - Implemented Python modules and SQL scripts.
-- Tests for extractors, transformations, reject handling, and final output.
-- Brief notes on assumptions and how to run the project.
-- Brief notes on how the design satisfies idempotency, incremental loading, and
-  data quality checks. Be ready to explain these tradeoffs in a follow-up
+- Be ready to explain these tradeoffs in a follow-up
   technical discussion.
-- Brief AI collaboration note if generative AI tools were used.
+  * How the design satisfies idempotency, incremental loading, and
+  data quality checks. 
+  * How you handle db credentials
 
 ## AI Policy
 
