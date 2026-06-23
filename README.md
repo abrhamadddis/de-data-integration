@@ -115,7 +115,7 @@ export SNOWFLAKE_DATABASE="DE_INTEGRATION"
 export SNOWFLAKE_SCHEMA="ANALYTICS"
 ```
 
-## Deliverables
+## Deliverables and Presentation
 
 - Runnable pipeline.
 - Snowflake DDL/DML or setup notes for required database, schemas, stages, and
@@ -123,6 +123,9 @@ export SNOWFLAKE_SCHEMA="ANALYTICS"
 - Implemented Python modules and SQL scripts.
 - Tests for extractors, transformations, reject handling, and final output.
 - Brief notes on assumptions and how to run the project.
+- Brief notes on how the design satisfies idempotency, incremental loading, and
+  data quality checks. Be ready to explain these tradeoffs in a follow-up
+  technical discussion.
 - Brief AI collaboration note if generative AI tools were used.
 
 ## AI Policy
