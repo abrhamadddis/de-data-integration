@@ -6,21 +6,31 @@ source and an acquired PostgreSQL source into a Snowflake sales fact table.
 
 ## Inputs
 
-Use the CSV fixtures in `data/`:
+Use the CSV fixtures in `data/raw/` and `data/processed/`:
 
-- `sqlserver_mock.csv`: core SQL Server sales.
-- `postgres_mock.csv`: acquired PostgreSQL sales.
-- `exchange_rates.csv`: currency conversion rates.
-- `expected_sales_fact.csv`: expected final fact output.
-- `expected_rejects.csv`: expected rejected records.
+- `data/raw/sqlserver_mock.csv`: core SQL Server sales.
+- `data/raw/postgres_mock.csv`: acquired PostgreSQL sales.
+- `data/raw/exchange_rates.csv`: currency conversion rates.
+- `data/processed/expected_sales_fact.csv`: expected final fact output.
+- `data/processed/expected_rejects.csv`: expected rejected records.
 
 ## Requirements
 
 - Implement an OOP Python pipeline with `main.py` as the entry point.
 - Use an abstract extractor contract, concrete SQL Server/PostgreSQL extractors, a Snowflake staging loader, and a reusable SQL script runner.
 - Run locally from the provided CSVs; live SQL Server/PostgreSQL instances are not required.
-- Load staged source data and final transformed outputs into Snowflake.
+- Load staged source data and final transformed outputs into Snowflake, or provide a Snowflake loader interface with tests/mocks if no Snowflake account is available.
+- The pipeline and tests must be runnable locally without live SQL Server, PostgreSQL, or Snowflake credentials.
 - Put Snowflake-native transformations in `src/sql/`.
+
+## Local vs Snowflake Execution
+
+Snowflake is the target warehouse design. If you do not have access to a live
+Snowflake account, implement the Snowflake boundary as an interface and use a
+mock, fake, or local SQL engine such as DuckDB for automated tests.
+
+Your implementation should make it clear where Snowflake credentials would be
+configured, but credentials should not be required for the local test suite.
 
 ## Transformations To Handle
 
@@ -35,11 +45,12 @@ Use the CSV fixtures in `data/`:
 
 ## Expected Output
 
-After processing SQL Server and PostgreSQL data, the final fact table can
-be written to Snowflake and match `data/expected_sales_fact.csv`.
+After processing SQL Server and PostgreSQL data, the final fact table should
+be written to Snowflake, or to a mocked/local Snowflake-compatible boundary,
+and match `data/processed/expected_sales_fact.csv`.
 
-Rejected rows should be written to Snowflake and match
-`data/expected_rejects.csv`.
+Rejected rows should be written to Snowflake, or to the same mocked/local
+boundary, and match `data/processed/expected_rejects.csv`.
 
 Suggested Snowflake objects (Feel free to change as you see fit):
 
@@ -70,7 +81,8 @@ is_refunded
 
 ```text
 config/dummy.yml
-data/*.csv
+data/raw/*.csv
+data/processed/*.csv
 main.py
 src/extractors/base_extractor.py
 src/extractors/postgres.py
@@ -103,7 +115,7 @@ python main.py
 - Runnable pipeline.
 - Implemented Python modules and SQL scripts.
 - Be ready for questions in a follow-up technical discussion like
-  * How the design satisfies idempotency, incremental loading, and data quality checks. 
+  * How the design satisfies idempotency, incremental loading, and data quality checks.
   * How you handle db credentials
   * How would your approach change for 100 million rows instead of these CSVs
   * Python OOP : Why use an abstract BaseExtractor instead of just functions?

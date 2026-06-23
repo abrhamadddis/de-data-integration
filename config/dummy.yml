@@ -1,0 +1,16 @@
+snowflake:
+  account: "${SNOWFLAKE_ACCOUNT}"
+  user: "${SNOWFLAKE_USER}"
+  password: "${SNOWFLAKE_PASSWORD}"
+  role: "${SNOWFLAKE_ROLE}"
+  warehouse: "${SNOWFLAKE_WAREHOUSE}"
+  database: "DE_INTEGRATION"
+  raw_schema: "RAW"
+  analytics_schema: "ANALYTICS"
+
+paths:
+  sqlserver_sales: "data/raw/sqlserver_mock.csv"
+  postgres_sales: "data/raw/postgres_mock.csv"
+  exchange_rates: "data/raw/exchange_rates.csv"
+  expected_sales_fact: "data/processed/expected_sales_fact.csv"
+  expected_rejects: "data/processed/expected_rejects.csv"
