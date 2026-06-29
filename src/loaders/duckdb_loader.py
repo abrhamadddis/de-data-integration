@@ -15,9 +15,10 @@ from .base_loader import WarehouseLoader
 
 
 class DuckDBLoader(WarehouseLoader):
-    """Loads and transforms data inside an in-memory (or file) DuckDB database."""
+    """WarehouseLoader backed by DuckDB; in-memory by default, file if a path is given."""
 
     def __init__(self, database: str = ":memory:"):
+        # ":memory:" is ephemeral (gone on close); pass a path to persist/inspect.
         self.connection = duckdb.connect(database)
 
     def create_schemas(self, schemas: list[str]) -> None:

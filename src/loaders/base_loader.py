@@ -13,7 +13,9 @@ import pandas as pd
 
 
 class WarehouseLoader(ABC):
-    """Contract for any warehouse backend the pipeline can load into."""
+    """The five operations the pipeline needs from any warehouse: create
+    schemas, stage a frame, run SQL, fetch results, and close. Concrete backends
+    (DuckDB, Snowflake) supply the implementations."""
 
     @abstractmethod
     def create_schemas(self, schemas: list[str]) -> None:

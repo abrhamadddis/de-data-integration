@@ -19,7 +19,11 @@ STG_EXCHANGE_RATES = f"{RAW_SCHEMA}.STG_EXCHANGE_RATES"
 
 
 class StagingLoader:
-    """Loads raw source data into the warehouse's staging tables."""
+    """Owns the RAW.STG_* table names and loads each source into them.
+
+    Holds no database logic of its own -- it delegates every write to the
+    injected ``WarehouseLoader``, so staging behaves identically on any backend.
+    """
 
     def __init__(self, warehouse: WarehouseLoader):
         self.warehouse = warehouse

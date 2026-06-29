@@ -14,14 +14,18 @@ from ..loaders.base_loader import WarehouseLoader
 
 
 class SqlRunner:
-    """Executes SQL scripts against a warehouse backend."""
+    """Runs .sql files from a directory against a warehouse backend.
+
+    Dialect-agnostic: it only reads files and forwards statements to the
+    backend's ``execute_sql``; the SQL itself carries all transformation logic.
+    """
 
     def __init__(self, warehouse: WarehouseLoader, sql_dir: str | Path):
         self.warehouse = warehouse
         self.sql_dir = Path(sql_dir)
 
     def run_file(self, filename: str) -> None:
-        """Read a SQL file from the configured directory and execute it."""
+        """Execute ``sql_dir/filename`` as a script."""
         sql_text = (self.sql_dir / filename).read_text(encoding="utf-8")
         self.run_script(sql_text)
 

@@ -50,7 +50,12 @@ _REJECT_QUERY = (
 
 
 def run_pipeline(config: dict, warehouse: WarehouseLoader) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Execute the full pipeline and return (sales_fact, sales_rejects)."""
+    """Run extract -> stage -> transform -> load against the given backend.
+
+    Extracts the three CSV sources, stages them into RAW.STG_* tables, runs the
+    SQL transform scripts in order, and returns the resulting SALES_FACT and
+    SALES_REJECTS tables as (fact, rejects) DataFrames.
+    """
     paths = config["paths"]
 
     core_df = SQLServerExtractor(paths["sqlserver_sales"]).extract()
@@ -70,7 +75,11 @@ def run_pipeline(config: dict, warehouse: WarehouseLoader) -> tuple[pd.DataFrame
 
 
 def format_fact_for_output(fact: pd.DataFrame) -> pd.DataFrame:
-    """Render the fact frame to the exact text shape of the expected fixture."""
+    """Normalize fact values to the text form used by the expected fixture.
+
+    Stringifies timestamps, blanks missing countries, fixes amounts to two
+    decimals, and lowercases the refund flag -- presentation only, no data change.
+    """
     out = fact.copy()
     out["checkout_timestamp"] = out["checkout_timestamp"].astype(str)
     out["customer_country"] = out["customer_country"].fillna("")
